@@ -1,0 +1,20 @@
+ACN,FNAME,LNM,TAXID,MADDR,PADDR,INC,EMAIL,PERS,DOB,SEX
+100000000123,John,Smith,128735231,1,1,120000,john.smith@server.com,0,1990-01-14,M
+100000000124,Megan,Richard,865506891,2,3,80000,megan.richard@mail.com,0,1980-12-04,F
+100000000193,Katherine,Chang,042348377,4,5,77000,katherine.chang@mail.com,0,1990-10-24,F
+100000000213,Robert,Fisher,498524970,6,6,85000,robert.fisher@mail.com,0,1991-07-15,M
+100000000231,Jonathan,Green,489469559,7,7,59000,jonathan.green@mail.com,0,1998-02-12,M
+100000000240,William,Dixon,224652282,8,8,66000,william.dixon@mail.com,0,1977-06-10,M
+100000000245,Sarah,Fisher,865506892,9,9,90000,sarah.fisher@mail.com,0,1980-03-11,F
+100000000246,Norma,Sullivan,042348378,10,11,60000,norma.sullivan@mail.com,0,1975-12-13,F
+100000000249,Jennifer,Woods,498524971,12,12,55000,jennifer.woods@mail.com,0,1991-11-05,F
+100000000251,Deanna,Wagner,489469560,13,14,71000,deanna.wagner@mail.com,0,1998-08-06,F
+100000000252,Kayla,Montgomery,224652283,15,16,49000,kayla.montgomery@mail.com,0,1989-04-27,F
+100000000253,Ryan,Hamilton,042348379,17,17,44000,ryan.hamilton@mail.com,0,2000-05-23,M
+100000000254,Peter,Bear,498524972,18,19,62000,peter.bear@mail.com,0,1999-02-22,M
+100000000255,Jason,Hunter,224652284,20,21,58000,jason.hunter@mail.com,0,1985-07-11,M
+100000000256,David,Coulthard,042348380,22,22,49999,david.coulthard@mail.com,0,1994-06-19,M
+100000000260,Jorge,Fangio,224652285,23,24,60000,jorge.fangio@mail.com,0,1980-03-17,M
+200000000001,MM Company,,123456789,25,26,50000,mm@company.com,1,2022-10-01,
+200000000002,Second Company,,331386972,27,28,900000,second@company.com,1,2012-04-11,
+200000000003,Third Company,,872471475,29,30,1000000,second@company.com,1,2000-01-01,
