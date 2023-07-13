@@ -1,2 +1,5 @@
 /.idea
+/__pycache__
 *.iml
+sdv_demo.py
+sdv_demo_constraint.py

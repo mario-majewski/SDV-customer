@@ -3,13 +3,14 @@ from sdv.metadata import MultiTableMetadata
 from sdv.multi_table import HMASynthesizer
 import os
 import pandas as pd
+import warnings
+warnings.filterwarnings('ignore')
 
 # if trained model exist use it
 
 # if not - load data and train the model
 
-
-# folder contains many CSV files including customers, stblpers, stblcntry and stblcntry1
+# folder contains many CSV files including customers and address
 # SYNTHETIC_FOLDER = 'D:\\mozaic-synthetic-data\\'
 SYNTHETIC_FOLDER = ''
 DATA_FOLDER = f'{SYNTHETIC_FOLDER}data'
@@ -18,7 +19,6 @@ METADATA_FILE = 'cif_metadata.json'
 datasets = load_csvs(folder_name=DATA_FOLDER)
 customers_table = datasets['cif']
 address_table = datasets['address']
-pers_table = datasets['stblpers']
 
 # create metadata for tables
 metadata = MultiTableMetadata()
@@ -33,13 +33,8 @@ metadata.detect_table_from_dataframe(
     data=address_table
 )
 
-metadata.detect_table_from_dataframe(
-    table_name='stblpers',
-    data=pers_table
-)
-
-print("Metadata tables:")
-print(metadata.tables)
+# print("Metadata tables:")
+# print(metadata.tables)
 
 # update information in tables
 metadata.update_column(
@@ -84,7 +79,6 @@ metadata.update_column(
 metadata.set_primary_key(
     table_name='cif',
     column_name='ACN'
-    # column_name='MADDR'
 )
 
 metadata.update_column(
@@ -103,7 +97,7 @@ metadata.update_column(
 metadata.update_column(
     table_name='cif',
     column_name='PERS',
-    sdtype='id'
+    sdtype='categorical'
 )
 
 metadata.update_column(
@@ -113,18 +107,18 @@ metadata.update_column(
     datetime_format='%Y-%m-%d'
 )
 
-metadata.update_column(
-    table_name='cif',
-    column_name='SEX',
-    sdtype='categorical',
-)
+# metadata.update_column(
+#     table_name='cif',
+#     column_name='SEX',
+#     sdtype='categorical',
+# )
 
 # ADDRESS table
 metadata.update_column(
     table_name='address',
     column_name='ID',
     sdtype='id',
-    regex_format='[0-9]{1,12}'
+    regex_format='[0-9]{12}'
 )
 metadata.set_primary_key(
     table_name='address',
@@ -166,7 +160,6 @@ metadata.update_column(
 metadata.update_column(
     table_name='address',
     column_name='CNTRY',
-    # sdtype='country_code'
     sdtype='categorical'
 )
 metadata.update_column(
@@ -176,31 +169,8 @@ metadata.update_column(
     pii=True
 )
 
-# STBLPERS
-metadata.update_column(
-    table_name='stblpers',
-    column_name='PERS',
-    sdtype='id'
-)
-
-metadata.set_primary_key(
-    table_name='stblpers',
-    column_name='PERS',
-)
-
-pers_constraint = {
-    'constraint_class': 'ScalarRange',
-    'table_name': 'stblpers',
-    'constraint_parameters': {
-        'column_name': 'PERS',
-        'low_value': 0,
-        'high_value': 1,
-        'strict_boundaries': True
-    }
-}
-
-print("Updated metadata:")
-print(metadata.tables)
+# print("Updated metadata:")
+# print(metadata.tables)
 
 # table relations
 metadata.add_relationship(
@@ -216,35 +186,37 @@ metadata.add_relationship(
 #     child_foreign_key='PADDR'
 # )
 
-metadata.add_relationship(
-    parent_table_name='stblpers',
-    child_table_name='cif',
-    parent_primary_key='PERS',
-    child_foreign_key='PERS'
-)
-
 # for test purposes only
 metadata.validate()
-# metadata.visualize(
-#     show_table_details=True,
-#     show_relationship_labels=True,
-#     output_filepath='customers_metadata.png'
-# )
 
+# save metadata definition to the file
 if os.path.exists(METADATA_FILE) and os.path.isfile(METADATA_FILE):
     os.remove(METADATA_FILE)
-
 metadata.save_to_json(filepath=METADATA_FILE)
 
 # create HMA synthesizer
 synthesizer = HMASynthesizer(metadata, locales='en_US')
 
+# load the constraint from the file
+synthesizer.load_custom_constraint_classes(
+    filepath='fm_constraint.py',
+    class_names=['FM_Constraint']
+)
+fm_constraint = {
+    'constraint_class': 'FM_Constraint',
+    'table_name': 'cif',
+    'constraint_parameters': {
+        'column_names': ['PERS', 'SEX'],
+    }
+}
+
+
 synthesizer.auto_assign_transformers(datasets)
-# synthesizer.add_constraints(
-#     constraints=[
-#         # pers_constraint # only numerical / datetime, not for ID !
-#     ]
-# )
+synthesizer.add_constraints(
+    constraints=[
+        fm_constraint
+    ]
+)
 
 print('Auto detected transformers:')
 print(synthesizer.get_transformers(table_name='cif'))
@@ -257,7 +229,7 @@ synthesizer.fit(datasets)
 synthesizer.save('cif_synthesizer.pkl')
 
 # and generate synthetic data
-new_data = synthesizer.sample(scale=2)
+new_data = synthesizer.sample(scale=1)
 
 print("Process finished with new (artificial) data:")
 for table in new_data:
