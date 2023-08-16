@@ -11,7 +11,6 @@ warnings.filterwarnings('ignore')
 # if not - load data and train the model
 
 # folder contains many CSV files including customers and address
-# SYNTHETIC_FOLDER = 'D:\\mozaic-synthetic-data\\'
 SYNTHETIC_FOLDER = ''
 DATA_FOLDER = f'{SYNTHETIC_FOLDER}data'
 METADATA_FILE = 'cif_metadata.json'
@@ -212,11 +211,11 @@ fm_constraint = {
 
 
 synthesizer.auto_assign_transformers(datasets)
-synthesizer.add_constraints(
-    constraints=[
-        fm_constraint
-    ]
-)
+# synthesizer.add_constraints(
+#     constraints=[
+#         fm_constraint
+#     ]
+# )
 
 print('Auto detected transformers:')
 print(synthesizer.get_transformers(table_name='cif'))
@@ -229,9 +228,11 @@ synthesizer.fit(datasets)
 synthesizer.save('cif_synthesizer.pkl')
 
 # and generate synthetic data
-new_data = synthesizer.sample(scale=1)
+new_data = synthesizer.sample(scale=10)
 
 print("Process finished with new (artificial) data:")
 for table in new_data:
+    print(table)
     data_frame = pd.DataFrame(new_data[table])
+    data_frame.to_csv(f'{table}-new-data.csv')
     print(data_frame)
